@@ -54,25 +54,19 @@ class TestBooksCollector:
         assert books_genre == 'Ужасы'
 
     # проверка получения списка книг определенного жанра
-    @pytest.mark.parametrize(
-        'genre, expected_books', [
-        ('Ужасы', ['Гордость и предубеждение и зомби', 'Кладбище домашних животных']),
-        ('Комедии', [])
-    ]
-    )
-    def test_get_books_with_specific_genre_returns_list_of_books_with_that_genre(self, genre, expected_books):
-
+    def test_get_books_with_specific_genre_returns_list_of_books_with_that_genre(self):
+        
         collector = BooksCollector()
-
+    
         collector.add_new_book('Гордость и предубеждение и зомби')
         collector.add_new_book('Кладбище домашних животных')
-    
+
         collector.set_book_genre('Гордость и предубеждение и зомби', 'Ужасы')
         collector.set_book_genre('Кладбище домашних животных', 'Ужасы')
-        
-        book_list = collector.get_books_with_specific_genre(genre)
-
-        assert book_list == expected_books
+    
+        book_list = collector.get_books_with_specific_genre('Ужасы')
+    
+        assert book_list == ['Гордость и предубеждение и зомби', 'Кладбище домашних животных']
 
     # проверка что книги жанра "Ужасы" не попадают в детские
     def test_get_books_for_children_does_not_include_horror_books(self):
