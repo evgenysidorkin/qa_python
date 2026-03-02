@@ -29,7 +29,7 @@ class TestBooksCollector:
         collector = BooksCollector()
         collector.add_new_book(name)
         
-        assert len(collector.get_books_genre()) == 0
+        assert len(collector.get_books_genre()) == 0   
     
     # проверка что у добавленной книги нет жанра
     def test_add_new_book_initial_genre_is_empty(self):
@@ -80,14 +80,14 @@ class TestBooksCollector:
         collector = BooksCollector()
 
         collector.add_new_book('Гордость и предубеждение и зомби')
-        collector.add_new_book('Красная шапочка')
+        collector.add_new_book('Три кота и море приключений')
 
         collector.set_book_genre('Гордость и предубеждение и зомби', 'Ужасы')
-        collector.set_book_genre('Красная шапочка', 'Мультфильмы')
+        collector.set_book_genre('Три кота и море приключений', 'Мультфильмы')
 
         children_books = collector.get_books_for_children()
 
-        assert 'Красная шапочка' in children_books and 'Гордость и предубеждение и зомби' not in children_books
+        assert 'Три кота и море приключений' in children_books and 'Гордость и предубеждение и зомби' not in children_books
         
     
     # проверка успешного добавления существующей книги в избранное
@@ -120,3 +120,60 @@ class TestBooksCollector:
         favorites = collector.get_list_of_favorites_books()
        
         assert 'Гордость и предубеждение и зомби' in favorites and len(favorites) == 1
+
+    
+    # проверка возврата полного словаря книг
+    def test_get_books_genre_returns_complete_dict(self):
+
+        collector = BooksCollector()
+
+        books = {
+        'О дивный новый мир': 'Фантастика',
+        'Кладбище домашних животных': 'Ужасы',
+        'Безмолвный пациент': 'Детективы',
+        'Три кота и море приключений': 'Мультфильмы',
+        'Трое в лодке, не считая собаки': 'Комедии'
+        }
+
+        for name, genre in books.items():
+            collector.add_new_book(name)
+            collector.set_book_genre(name, genre)
+
+        assert collector.get_books_genre() == books
+
+
+    # проверка получения жанра книги по её имени
+    @pytest.mark.parametrize(
+            'book_name, expected_genre', [
+                ['О дивный новый мир', 'Фантастика'],
+                ['Кладбище домашних животных', 'Ужасы'],
+                ['Безмолвный пациент', 'Детективы'],
+                ['Три кота и море приключений', 'Мультфильмы'],
+                ['Трое в лодке, не считая собаки', 'Комедии']                
+                ])
+    def test_get_book_genre_for_existing_book_returns_its_genre(self, book_name, expected_genre):
+        collector = BooksCollector()
+    
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, expected_genre)
+    
+        assert collector.get_book_genre(book_name) == expected_genre
+
+
+    # проверка получения списка избранных книг
+    def test_get_list_of_favorites_books_returns_list_with_multiple_books(self):
+
+        collector = BooksCollector()
+
+        collector.add_new_book('Гордость и предубеждение и зомби')
+        collector.add_new_book('Кладбище домашних животных')
+        collector.add_new_book('Трое в лодке, не считая собаки')
+
+    
+        collector.add_book_in_favorites('Гордость и предубеждение и зомби')
+        collector.add_book_in_favorites('Кладбище домашних животных')
+        collector.add_book_in_favorites('Трое в лодке, не считая собаки')
+
+        favorites = collector.get_list_of_favorites_books()
+       
+        assert favorites == ['Гордость и предубеждение и зомби', 'Кладбище домашних животных', 'Трое в лодке, не считая собаки'] and len(favorites) == 3    
